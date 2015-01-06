@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Media: Vine module.
+ */
+
+/**
+ * Empty update function.
+ */
+function media_vimeo_update_7100() {
+  
+}
