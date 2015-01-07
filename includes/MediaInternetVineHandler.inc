@@ -10,7 +10,7 @@
  *
  * @see hook_media_internet_providers().
  */
-class MediaInternetVimeoHandler extends MediaInternetBaseHandler {
+class MediaInternetVineHandler extends MediaInternetBaseHandler {
   public function parse($embedCode) {
     // http://vimeo.com/*
     // http://vimeo.com/video/*

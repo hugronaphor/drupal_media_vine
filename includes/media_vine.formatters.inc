@@ -4,15 +4,15 @@
  * @file
  * 
  * @todo
- * File formatters for Vimeo videos.
+ * File formatters for Vine videos.
  */
 
 /**
  * Implements hook_file_formatter_info().
  */
-function media_vimeo_file_formatter_info() {
-  $formatters['media_vimeo_video'] = array(
-    'label' => t('Vimeo Video'),
+function media_vine_file_formatter_info() {
+  $formatters['media_vine_video'] = array(
+    'label' => t('Vine Video'),
     'file types' => array('video'),
     'default settings' => array(
       'width' => 640,
@@ -28,20 +28,20 @@ function media_vimeo_file_formatter_info() {
       'protocol' => 'https://',
       'protocol_specify' => FALSE,
     ),
-    'view callback' => 'media_vimeo_file_formatter_video_view',
-    'settings callback' => 'media_vimeo_file_formatter_video_settings',
-    'mime types' => array('video/vimeo'),
+    'view callback' => 'media_vine_file_formatter_video_view',
+    'settings callback' => 'media_vine_file_formatter_video_settings',
+    'mime types' => array('video/vine'),
   );
 
-  $formatters['media_vimeo_image'] = array(
-    'label' => t('Vimeo Preview Image'),
+  $formatters['media_vine_image'] = array(
+    'label' => t('Vine Preview Image'),
     'file types' => array('video'),
     'default settings' => array(
       'image_style' => '',
     ),
-    'view callback' => 'media_vimeo_file_formatter_image_view',
-    'settings callback' => 'media_vimeo_file_formatter_image_settings',
-    'mime types' => array('video/vimeo'),
+    'view callback' => 'media_vine_file_formatter_image_view',
+    'settings callback' => 'media_vine_file_formatter_image_settings',
+    'mime types' => array('video/vine'),
   );
 
   return $formatters;
@@ -50,12 +50,12 @@ function media_vimeo_file_formatter_info() {
 /**
  * Implements hook_file_formatter_FORMATTER_view().
  */
-function media_vimeo_file_formatter_video_view($file, $display, $langcode) {
+function media_vine_file_formatter_video_view($file, $display, $langcode) {
   $scheme = file_uri_scheme($file->uri);
 
-  if ($scheme == 'vimeo') {
+  if ($scheme == 'vine') {
     $element = array(
-      '#theme' => 'media_vimeo_video',
+      '#theme' => 'media_vine_video',
       '#uri' => $file->uri,
       '#options' => array(),
     );
@@ -74,33 +74,33 @@ function media_vimeo_file_formatter_video_view($file, $display, $langcode) {
 /**
  * Implements hook_file_formatter_FORMATTER_settings().
  */
-function media_vimeo_file_formatter_video_settings($form, &$form_state, $settings) {
+function media_vine_file_formatter_video_settings($form, &$form_state, $settings) {
   $element = array();
 
   $element['width'] = array(
     '#title' => t('Width'),
     '#type' => 'textfield',
     '#default_value' => $settings['width'],
-    '#element_validate' => array('_vimeo_validate_video_width_and_height'),
+    '#element_validate' => array('_vine_validate_video_width_and_height'),
   );
   $element['height'] = array(
     '#title' => t('Height'),
     '#type' => 'textfield',
     '#default_value' => $settings['height'],
-    '#element_validate' => array('_vimeo_validate_video_width_and_height'),
+    '#element_validate' => array('_vine_validate_video_width_and_height'),
   );
 
   // @see http://developer.vimeo.com/player/embedding
 
   // Multiple and string options.
   $element['color'] = array(
-    '#title' => t('Custom video controls color'),
+    '#title' => t('Custom vine controls color'),
     '#type' => 'textfield',
     '#default_value' => $settings['color'],
     '#description' => t('A 3 or 6 character hex color code'),
     '#maxlength' => 7,
     '#size' => 7,
-    '#element_validate' => array('_vimeo_validate_video_color'),
+    '#element_validate' => array('_vine_validate_video_color'),
   );
   $element['protocol_specify'] = array(
     '#title' => t('Specify an http protocol'),
@@ -118,7 +118,7 @@ function media_vimeo_file_formatter_video_settings($form, &$form_state, $setting
     ),
     '#states' => array(
       'invisible' => array(
-        ':input[name="displays[media_vimeo_video][settings][protocol_specify]"]' => array('checked' => FALSE),
+        ':input[name="displays[media_vine_video][settings][protocol_specify]"]' => array('checked' => FALSE),
       ),
     ),
   );
@@ -164,7 +164,7 @@ function media_vimeo_file_formatter_video_settings($form, &$form_state, $setting
 /**
  * Validation for width and height.
  */
-function _vimeo_validate_video_width_and_height($element, &$form_state, $form) {
+function _vine_validate_video_width_and_height($element, &$form_state, $form) {
   // Check if the value is a number with an optional decimal or percentage sign, or "auto".
   if (!empty($element['#value']) && !preg_match('/^(auto|([0-9]*(\.[0-9]+)?%?))$/', $element['#value'])) {
     form_error($element, t("The value entered for @dimension is invalid. Please insert a unitless integer for pixels, a percent, or \"auto\". Note that percent and auto may not function correctly depending on the browser and doctype.", array('@dimension' => $element['#title'])));
@@ -174,7 +174,7 @@ function _vimeo_validate_video_width_and_height($element, &$form_state, $form) {
 /**
  * Validation for color.
  */
-function _vimeo_validate_video_color($element, &$form_state, $form) {
+function _vine_validate_video_color($element, &$form_state, $form) {
   // If the value is set, check if it's a hex color with or without '#'.
  if (!empty($element['#value']) && !preg_match('/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $element['#value'])) {
     form_error($element, t("The color value is invalid. Please use a 3 or 6 character hex color code.", array('@dimension' => $element['#title'])));
@@ -184,10 +184,10 @@ function _vimeo_validate_video_color($element, &$form_state, $form) {
 /**
  * Implements hook_file_formatter_FORMATTER_view().
  */
-function media_vimeo_file_formatter_image_view($file, $display, $langcode) {
+function media_vine_file_formatter_image_view($file, $display, $langcode) {
   $scheme = file_uri_scheme($file->uri);
 
-  if ($scheme == 'vimeo') {
+  if ($scheme == 'vine') {
     $wrapper = file_stream_wrapper_get_instance_by_uri($file->uri);
     $image_style = $display['settings']['image_style'];
     $valid_image_styles = image_style_options(FALSE);
@@ -215,7 +215,7 @@ function media_vimeo_file_formatter_image_view($file, $display, $langcode) {
 /**
  * Implements hook_file_formatter_FORMATTER_settings().
  */
-function media_vimeo_file_formatter_image_settings($form, &$form_state, $settings) {
+function media_vine_file_formatter_image_settings($form, &$form_state, $settings) {
   $element = array();
 
   $element['image_style'] = array(

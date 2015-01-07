@@ -9,11 +9,11 @@
  *  Create an instance like this:
  *  $vimeo = new MediaVimeoStreamWrapper('vimeo://v/[video-code]');
  */
-class MediaVimeoStreamWrapper extends MediaReadOnlyStreamWrapper {
+class MediaVineStreamWrapper extends MediaReadOnlyStreamWrapper {
   protected $base_url = 'http://vimeo.com';
 
   static function getMimeType($uri, $mapping = NULL) {
-    return 'video/vimeo';
+    return 'video/vine';
   }
 
   function interpolateUrl() {
@@ -24,7 +24,7 @@ class MediaVimeoStreamWrapper extends MediaReadOnlyStreamWrapper {
 
   function getOriginalThumbnailPath() {
     $parts = $this->get_parameters();
-    $uri = file_stream_wrapper_uri_normalize('vimeo://v/' . check_plain($parts['v']));
+    $uri = file_stream_wrapper_uri_normalize('vine://v/' . check_plain($parts['v']));
     $external_url = file_create_url($uri);
     $oembed_url = url('http://vimeo.com/api/oembed.json', array('query' => array('url' => $external_url)));
     $response = drupal_http_request($oembed_url);
@@ -43,7 +43,7 @@ class MediaVimeoStreamWrapper extends MediaReadOnlyStreamWrapper {
     $parts = $this->get_parameters();
     // There's no need to hide thumbnails, always use the public system rather
     // than file_default_scheme().
-    $local_path = 'public://media-vimeo/' . check_plain($parts['v']) . '.jpg';
+    $local_path = 'public://media-vine/' . check_plain($parts['v']) . '.jpg';
 
     if (!file_exists($local_path)) {
       $dirname = drupal_dirname($local_path);
