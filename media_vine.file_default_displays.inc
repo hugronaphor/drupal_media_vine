@@ -17,17 +17,10 @@ function media_vine_file_default_displays() {
   $file_display->weight = 0;
   $file_display->status = TRUE;
   $file_display->settings = array(
-    'width' => '640',
-    'height' => '360',
-    'color' => '',
-    'protocol_specify' => 0,
-    'protocol' => 'https://',
-    'autoplay' => 0,
-    'loop' => 0,
-    'title' => 1,
-    'byline' => 1,
-    'portrait' => 1,
-    'api' => 0,
+    'width' => '600',
+    'height' => '600',
+    'embed_format' => 'simple',
+    'autoplay_audio' => 0,
   );
   $file_displays['video__default__media_vine_video'] = $file_display;
 
@@ -48,16 +41,9 @@ function media_vine_file_default_displays() {
   $file_display->status = TRUE;
   $file_display->settings = array(
     'width' => '320',
-    'height' => '180',
-    'color' => '',
-    'protocol_specify' => 0,
-    'protocol' => 'https://',
-    'autoplay' => 0,
-    'loop' => 0,
-    'title' => 1,
-    'byline' => 1,
-    'portrait' => 1,
-    'api' => 0,
+    'height' => '320',
+    'embed_format' => 'simple',
+    'autoplay_audio' => 0,
   );
   $file_displays['video__teaser__media_vine_video'] = $file_display;
 

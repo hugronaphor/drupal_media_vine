@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Extends the MediaInternetBaseHandler class to handle Vimeo videos.
+ * Extends the MediaInternetBaseHandler class for Vine.
  */
 
 /**
@@ -11,26 +11,13 @@
  * @see hook_media_internet_providers().
  */
 class MediaInternetVineHandler extends MediaInternetBaseHandler {
-  public function parse($embedCode) {
-    // http://vimeo.com/*
-    // http://vimeo.com/video/*
-    // http://vimeo.com/groups/*/videos/*
-    // http://vimeo.com/channels/*#$ID
-    $patterns = array(
-      //'@vimeo\.com/(\d+)@i',
-      //'@vimeo\.com/video/(\d+)@i',
-      //'@vimeo\.com/groups/.+/videos/(\d+)@i',
-      //'@vimeo\.com/channels/.+#(\d+)@i',
-      '@vine\.co\/v\/(.*)@i'
-    );
 
-    foreach ($patterns as $pattern) {
-      preg_match($pattern, $embedCode, $matches);
-      // @TODO: Parse is called often. Refactor so that valid ID is checked
-      // when a video is added, but not every time the embedCode is parsed.
-      if (isset($matches[1]) && self::validId($matches[1])) {
-        return file_stream_wrapper_uri_normalize('vine://v/' . $matches[1]);
-      }
+  public function parse($embedCode) {
+    // e.g: https://vine.co/v/hrAOEOBw0F2  
+    $pattern = '%vine\.co\/v\/(.*)%i';
+    preg_match($pattern, $embedCode, $matches);
+    if (isset($matches[1]) && self::validId($matches[1])) {
+      return file_stream_wrapper_uri_normalize('vine://v/' . $matches[1]);
     }
   }
 
@@ -43,7 +30,6 @@ class MediaInternetVineHandler extends MediaInternetBaseHandler {
   public function getFileObject() {
     $uri = $this->parse($this->embedCode);
     $file = file_uri_to_object($uri, TRUE);
-
     // Try to default the file name to the video's title.
     if (empty($file->fid) && $info = $this->getOEmbed()) {
       $file->filename = truncate_utf8($info['title'], 255);
@@ -63,10 +49,9 @@ class MediaInternetVineHandler extends MediaInternetBaseHandler {
    *   Otherwise, NULL.
    */
   public function getOEmbed() {
-    
     $uri = $this->parse($this->embedCode);
-    $video_id = arg(1, file_uri_target($uri));    
-    $oembed_url = url('https://api.vineapp.com/timelines/posts/s/'. $video_id);    
+    $video_id = arg(1, file_uri_target($uri));
+    $oembed_url = url('https://api.vineapp.com/timelines/posts/s/' . $video_id);
     $response = drupal_http_request($oembed_url);
 
     if (!isset($response->error)) {
@@ -86,8 +71,7 @@ class MediaInternetVineHandler extends MediaInternetBaseHandler {
    *   MediaInternetValidationException otherwise.
    */
   static public function validId($id) {
-    
-    $url = 'https://api.vineapp.com/timelines/posts/s/'. $id;
+    $url = 'https://api.vineapp.com/timelines/posts/s/' . $id;
     $response = drupal_http_request($url, array('method' => 'HEAD'));
 
     if ($response->code == 401) {
@@ -99,4 +83,5 @@ class MediaInternetVineHandler extends MediaInternetBaseHandler {
 
     return TRUE;
   }
+
 }

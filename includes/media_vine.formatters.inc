@@ -15,18 +15,10 @@ function media_vine_file_formatter_info() {
     'label' => t('Vine Video'),
     'file types' => array('video'),
     'default settings' => array(
-      'width' => 640,
-      'height' => 360,
-      'preview_uri' => 'vimeo://v/21869117',
-      'api' => 0,
-      'autoplay' => 0,
-      'byline' => 1,
-      'color' => NULL,
-      'loop' => 0,
-      'portrait' => 1,
-      'title' => 1,
-      'protocol' => 'https://',
-      'protocol_specify' => FALSE,
+      'width' => 600,
+      'height' => 600,
+      'embed_format' => 'simple',
+      'autoplay_audio' => 0,
     ),
     'view callback' => 'media_vine_file_formatter_video_view',
     'settings callback' => 'media_vine_file_formatter_video_settings',
@@ -50,7 +42,7 @@ function media_vine_file_formatter_info() {
 /**
  * Implements hook_file_formatter_FORMATTER_view().
  */
-function media_vine_file_formatter_video_view($file, $display, $langcode) {
+function media_vine_file_formatter_video_view($file, $display) {
   $scheme = file_uri_scheme($file->uri);
 
   if ($scheme == 'vine') {
@@ -63,7 +55,7 @@ function media_vine_file_formatter_video_view($file, $display, $langcode) {
     // Fake a default for attributes so the ternary doesn't choke.
     $display['settings']['attributes'] = array();
 
-    foreach (array('width', 'height', 'api' , 'autoplay', 'byline', 'color', 'loop', 'portrait', 'title', 'protocol', 'protocol_specify', 'attributes') as $setting) {
+    foreach (array('width', 'height', 'embed_format', 'autoplay_audio', 'attributes') as $setting) {
       $element['#options'][$setting] = isset($file->override[$setting]) ? $file->override[$setting] : $display['settings'][$setting];
     }
 
@@ -73,6 +65,8 @@ function media_vine_file_formatter_video_view($file, $display, $langcode) {
 
 /**
  * Implements hook_file_formatter_FORMATTER_settings().
+ * 
+ * @see https://dev.twitter.com/web/vine/embed
  */
 function media_vine_file_formatter_video_settings($form, &$form_state, $settings) {
   $element = array();
@@ -81,104 +75,31 @@ function media_vine_file_formatter_video_settings($form, &$form_state, $settings
     '#title' => t('Width'),
     '#type' => 'textfield',
     '#default_value' => $settings['width'],
-    '#element_validate' => array('_vine_validate_video_width_and_height'),
   );
   $element['height'] = array(
     '#title' => t('Height'),
     '#type' => 'textfield',
     '#default_value' => $settings['height'],
-    '#element_validate' => array('_vine_validate_video_width_and_height'),
   );
 
-  // @see http://developer.vimeo.com/player/embedding
-
-  // Multiple and string options.
-  $element['color'] = array(
-    '#title' => t('Custom vine controls color'),
-    '#type' => 'textfield',
-    '#default_value' => $settings['color'],
-    '#description' => t('A 3 or 6 character hex color code'),
-    '#maxlength' => 7,
-    '#size' => 7,
-    '#element_validate' => array('_vine_validate_video_color'),
-  );
-  $element['protocol_specify'] = array(
-    '#title' => t('Specify an http protocol'),
-    '#type' => 'checkbox',
-    '#default_value' => $settings['protocol_specify'],
-    '#description' => t('An explicit protocol may be neccesary for videos embedded in RSS feeds and emails. If no protocol is specified, iframes will be protocol relative.'),
-  );
-  $element['protocol'] = array(
-    '#title' => t('Iframe protocol'),
-    '#type' => 'radios',
-    '#default_value' => $settings['protocol'],
+  $element['embed_format'] = array(
+    '#title' => t('Specify embed format'),
+    '#type' => 'select',
     '#options' => array(
-      'http://' => 'HTTP',
-      'https://' => 'HTTPS',
+      'simple' => 'Simple',
+      'postcard' => 'Postcard',
     ),
-    '#states' => array(
-      'invisible' => array(
-        ':input[name="displays[media_vine_video][settings][protocol_specify]"]' => array('checked' => FALSE),
-      ),
-    ),
+    '#default_value' => $settings['embed_format'],
+    '#description' => t('An embed format of Vine video.'),
   );
 
-  // Single options.
-  // Note: make sure the positive/negitive language lines up with option
-  // processing in media_vimeo.theme.inc.
-  $element['autoplay'] = array(
-    '#title' => t('Autoplay video on load'),
+  $element['autoplay_audio'] = array(
+    '#title' => t('Autoplay audio'),
     '#type' => 'checkbox',
-    '#default_value' => $settings['autoplay'],
-  );
-  $element['loop'] = array(
-    '#title' => t('Loop video'),
-    '#type' => 'checkbox',
-    '#default_value' => $settings['loop'],
-  );
-  $element['title'] = array(
-    '#title' => t('Show the video title'),
-    '#type' => 'checkbox',
-    '#default_value' => $settings['title'],
-  );
-  $element['byline'] = array(
-    '#title' => t('Show the video byline'),
-    '#type' => 'checkbox',
-    '#default_value' => $settings['byline'],
-  );
-  $element['portrait'] = array(
-    '#title' => t("Show the user's portrait"),
-    '#type' => 'checkbox',
-    '#default_value' => $settings['portrait'],
-  );
-  $element['api'] = array(
-    '#title' => t('Enable the <a href="http://developer.vimeo.com/player/js-api">Javascript API</a>'),
-    '#type' => 'checkbox',
-    '#default_value' => $settings['api'],
-    '#description' => t('A required id in the format <code>media-vimeo-{video_id}</code> will be added to each iframe.'),
+    '#default_value' => $settings['autoplay_audio'],
   );
 
   return $element;
-}
-
-/**
- * Validation for width and height.
- */
-function _vine_validate_video_width_and_height($element, &$form_state, $form) {
-  // Check if the value is a number with an optional decimal or percentage sign, or "auto".
-  if (!empty($element['#value']) && !preg_match('/^(auto|([0-9]*(\.[0-9]+)?%?))$/', $element['#value'])) {
-    form_error($element, t("The value entered for @dimension is invalid. Please insert a unitless integer for pixels, a percent, or \"auto\". Note that percent and auto may not function correctly depending on the browser and doctype.", array('@dimension' => $element['#title'])));
-  }
-}
-
-/**
- * Validation for color.
- */
-function _vine_validate_video_color($element, &$form_state, $form) {
-  // If the value is set, check if it's a hex color with or without '#'.
- if (!empty($element['#value']) && !preg_match('/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $element['#value'])) {
-    form_error($element, t("The color value is invalid. Please use a 3 or 6 character hex color code.", array('@dimension' => $element['#title'])));
-  }
 }
 
 /**

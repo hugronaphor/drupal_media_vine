@@ -2,12 +2,12 @@
 
 /**
  *  @file
- *  Extends the MediaReadOnlyStreamWrapper class to handle Vine videos.
+ *  Extends the MediaReadOnlyStreamWrapper class for Vine.
  */
 
 /**
  *  Create an instance like this:
- *  $vine = new MediaVineStreamWrapper('vine://v/[video-code]');
+ *  $vine = new MediaVineStreamWrapper('vine://v/[video-id]');
  */
 class MediaVineStreamWrapper extends MediaReadOnlyStreamWrapper {
   protected $base_url = 'http://vine.com';
@@ -17,8 +17,8 @@ class MediaVineStreamWrapper extends MediaReadOnlyStreamWrapper {
   }
 
   function interpolateUrl() {
-    if ($parameters = $this->get_parameters()) {
-      return $this->base_url . '/' . $parameters['v'];
+    if ($params = $this->get_parameters()) {
+      return $this->base_url . '/' . $params['v'];
     }
   }
 
