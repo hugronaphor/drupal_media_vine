@@ -7,7 +7,7 @@
  * Template file for theme('media_vine_video').
  *
  * Variables available:
- *  $uri - The media uri for the Vine video (e.g., vine://v/hrAOEOBw0F2 ).
+ *  $uri - The media uri for the Vine video (e.g. vine://v/hrAOEOBw0F2).
  *  $video_id - The unique identifier of the Vine video (e.g., hrAOEOBw0F2).
  *  $id - The file entity ID (fid).
  *  $url - The full url including query options for the Vine iframe.

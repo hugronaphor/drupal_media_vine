@@ -1,7 +1,5 @@
 CONTENTS OF THIS FILE
 ---------------------
-@todo Edit description when dev is done!!!
-
  * Introduction
  * Requirements
  * Installation
@@ -12,31 +10,28 @@ INTRODUCTION
 
 Current Maintainers:
 
- * Devin Carlson <http://drupal.org/user/290182>
+ * Cornel Andreev <http://drupal.org/user/2333992>
 
-Media: Vimeo adds Vimeo as a supported media provider.
+Media: Vine adds Vine as a supported media provider.
 
 REQUIREMENTS
 ------------
 
-Media: Vimeo has one dependency.
-
-Contributed modules
+Dependencies:
  * Media Internet - A submodule of the Media module.
 
 INSTALLATION
 ------------
 
-Media: Vimeo can be installed via the standard Drupal installation process
+Media: Vine can be installed via the standard Drupal installation process
 (http://drupal.org/node/895232).
 
 USAGE
 -----
 
-Media: Vimeo integrates the Vimeo video-sharing service with the Media module to
-allow users to add and manage Vimeo videos as they would any other piece of
-media.
+Media: Vine integrates the Vine video-sharing service with the Media module to
+allow users to add and manage Vine videos as any other piece of media.
 
 Internet media can be added on the Web tab of the Add file page (file/add/web).
-With Media: Vimeo enabled, users can add a Vimeo video by entering its URL or
-embed code.
+With Media: Vine enabled, users can add a Vine video by entering its URL 
+(e.g. vine://v/hrAOEOBw0F2).
