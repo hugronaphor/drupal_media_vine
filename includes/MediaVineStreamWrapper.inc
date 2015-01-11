@@ -2,15 +2,15 @@
 
 /**
  *  @file
- *  Extends the MediaReadOnlyStreamWrapper class to handle Vimeo videos.
+ *  Extends the MediaReadOnlyStreamWrapper class to handle Vine videos.
  */
 
 /**
  *  Create an instance like this:
- *  $vimeo = new MediaVimeoStreamWrapper('vimeo://v/[video-code]');
+ *  $vine = new MediaVineStreamWrapper('vine://v/[video-code]');
  */
 class MediaVineStreamWrapper extends MediaReadOnlyStreamWrapper {
-  protected $base_url = 'http://vimeo.com';
+  protected $base_url = 'http://vine.com';
 
   static function getMimeType($uri, $mapping = NULL) {
     return 'video/vine';
@@ -23,15 +23,13 @@ class MediaVineStreamWrapper extends MediaReadOnlyStreamWrapper {
   }
 
   function getOriginalThumbnailPath() {
-    $parts = $this->get_parameters();
-    $uri = file_stream_wrapper_uri_normalize('vine://v/' . check_plain($parts['v']));
-    $external_url = file_create_url($uri);
-    $oembed_url = url('http://vimeo.com/api/oembed.json', array('query' => array('url' => $external_url)));
+    $parts = $this->get_parameters();    
+    $oembed_url = url('https://api.vineapp.com/timelines/posts/s/'. check_plain($parts['v']));    
     $response = drupal_http_request($oembed_url);
 
     if (!isset($response->error)) {
       $data = drupal_json_decode($response->data);
-      return $data['thumbnail_url'];
+      return $data['data']['records'][0]['thumbnailUrl'];
     }
     else {
       throw new Exception("Error Processing Request. (Error: {$response->code}, {$response->error})");

@@ -8,6 +8,6 @@
 /**
  * Empty update function.
  */
-function media_vimeo_update_7100() {
+function media_vine_update_7100() {
   
 }

@@ -21,8 +21,10 @@
  *  iframes.
  *
  */
-
+//dsm(get_defined_vars());
 ?>
-<div class="<?php print $classes; ?> media-vine-<?php print $id; ?>">
-  <iframe class="media-vine-player" <?php print $api_id_attribute; ?>width="<?php print $width; ?>" height="<?php print $height; ?>" title="<?php print $title; ?>" src="<?php print $url; ?>" frameborder="0" allowfullscreen><?php print $alternative_content; ?></iframe>
+
+
+<div class="<?php print $classes; ?> oii-blea media-vine-<?php print $id; ?>">  
+  <iframe class="vine-embed" src="https://vine.co/v/<?php print $video_id; ?>/embed/simple" width="<?php print $width; ?>" height="<?php print $height; ?>" frameborder="0"></iframe><script async src="//platform.vine.co/static/scripts/embed.js" charset="utf-8"></script>
 </div>
